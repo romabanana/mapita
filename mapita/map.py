@@ -1,21 +1,33 @@
-import random
+import noise
+import numpy as np
 
+# Perlin parameters
+scale = 30.0
+octaves = 8
+persistance = 0.5
+lacunarity = 2.0
 
-def generate_random_map(width: int, height: int, wall_probability: float = 0.3):
-    map_matrix = []
+# threshold
+threshold = 0.0
 
+def generate_random_map(width: int, height: int):
+
+    map_matrix = np.zeros((height,width), dtype=int)
+    base = np.random.randint(1,40)
     for y in range(height):
-        row = []
-        for x in range(width):
-            # Ensure borders are walls
-            #if x == 0 or x == width - 1 or y == 0 or y == height - 1:
-            #    row.append('#')
-            #else:
-                # Randomly decide if the cell should be a wall or floor
-                if random.random() < wall_probability:
-                    row.append('a')  # Wall
-                else:
-                    row.append('b')  # Floor
-        map_matrix.append(row)
-    
+        for x in range (width):
+            noise_val = noise.pnoise2(
+                    x/scale,
+                    y/scale,
+                    octaves,
+                    persistance,
+                    lacunarity,
+                    repeatx=1024,
+                    repeaty=1024,
+                    base = base
+                    )
+            if noise_val > threshold:
+                map_matrix[y,x] = 1 
+            else:
+                map_matrix[y,x] = 0
     return map_matrix

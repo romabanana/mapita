@@ -17,20 +17,20 @@ def display_ascii_map(matrix):
     for row in matrix:
         output_row = Text();
         for char in row:
-            if char == 'a':
-                output_row.append_text(Text(empty, style="on green"))  # Red walls with yellow background
-            elif char == 'b':
-                output_row.append_text(Text(empty, style="on blue"))  # Blue floor
+            if char == 1:
+                output_row.append_text(Text(empty, style="on green"))  
+            elif char == 0:
+                output_row.append_text(Text(empty, style="on blue"))
             else:
-                output_row.append_text(empty)  # For other characters (if any)       
+                output_row.append_text(empty)       
         # Print the row after joining the parts
-        console.print(output_row) 
+        console.print(output_row)       
 
 
 # Example ASCII map as a 1D list
 
 
-ascii_map = generate_random_map(30,30,0.8) 
+ascii_map = generate_random_map(40,20) 
 
 
 @app.command()
