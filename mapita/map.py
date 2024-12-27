@@ -3,12 +3,14 @@ import numpy as np
 
 # Perlin parameters
 scale = 30.0
-octaves = 8
+octaves = 1
 persistance = 0.5
 lacunarity = 2.0
 
 # threshold
 threshold = 0.0
+
+
 
 def generate_random_map(width: int, height: int):
 
@@ -24,10 +26,13 @@ def generate_random_map(width: int, height: int):
                     lacunarity,
                     repeatx=1024,
                     repeaty=1024,
-                    base = base
+                    base = 2
                     )
-            if noise_val > threshold:
-                map_matrix[y,x] = 1 
-            else:
-                map_matrix[y,x] = 0
+            val = np.floor(noise_val/(0.1))
+            if val > 2:
+                val = 2 
+            elif val < -2:
+                val = -2
+                
+            map_matrix[y,x] = val
     return map_matrix

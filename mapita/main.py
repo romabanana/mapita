@@ -10,27 +10,50 @@ app = typer.Typer()
 # Create a Rich Console instance for pretty output
 console = Console()
 
+ 
+
+
+def layer1():
+    return Text(" ", style="on blue")
+
+def layer2():
+    return Text(" ", style="on cyan")
+
+def layer3():
+    return Text(" ", style="on bright_yellow")
+
+def layer4():
+    return Text(" ", style="on green")
+
+def layer5():
+    return Text(" ", style="on dark_green")
+
+
+# Case dictionary
+
+
+case_dispatcher = {
+    -2: layer1,
+    -1: layer2,
+    0: layer3,
+    1: layer4,
+    2: layer5
+}
+
+
 
 def display_ascii_map(matrix):
     # Loop through each row in the matrix and print it with advanced styling
-    empty = " "
-    for row in matrix:
+   for row in matrix:
         output_row = Text();
         for char in row:
-            if char == 1:
-                output_row.append_text(Text(empty, style="on green"))  
-            elif char == 0:
-                output_row.append_text(Text(empty, style="on blue"))
-            else:
-                output_row.append_text(empty)       
+           output_row.append_text(case_dispatcher.get(char,layer5)())
+
         # Print the row after joining the parts
         console.print(output_row)       
 
 
-# Example ASCII map as a 1D list
-
-
-ascii_map = generate_random_map(40,20) 
+ascii_map = generate_random_map(100,40) 
 
 
 @app.command()
