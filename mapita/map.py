@@ -26,7 +26,7 @@ def generate_random_map(width: int, height: int):
                     lacunarity,
                     repeatx=1024,
                     repeaty=1024,
-                    base = 2
+                    base = base
                     )
             val = np.floor(noise_val/(0.1))
             if val > 2:

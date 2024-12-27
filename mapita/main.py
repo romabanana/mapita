@@ -14,19 +14,19 @@ console = Console()
 
 
 def layer1():
-    return Text(" ", style="on blue")
+    return Text(" ", style="white on cyan")
 
 def layer2():
-    return Text(" ", style="on cyan")
+    return Text(" ", style="light_green on cyan")
 
 def layer3():
-    return Text(" ", style="on bright_yellow")
+    return Text(" ", style="cyan on bright_yellow")
 
 def layer4():
-    return Text(" ", style="on green")
+    return Text(" ", style="bright_yellow on green")
 
 def layer5():
-    return Text(" ", style="on dark_green")
+    return Text(" ", style="green on dark_green")
 
 
 # Case dictionary
@@ -53,7 +53,7 @@ def display_ascii_map(matrix):
         console.print(output_row)       
 
 
-ascii_map = generate_random_map(100,40) 
+ascii_map = generate_random_map(40,20) 
 
 
 @app.command()
