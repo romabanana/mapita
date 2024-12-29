@@ -2,18 +2,23 @@ import noise
 import numpy as np
 
 # Perlin parameters
-scale = 60.0
+scale = 120.0
 octaves = 3
 persistance = 0.5
 lacunarity = 2.0
 
-# threshold
-threshold = 0.0
+
+w = 25 
+h = 50
 
 
+def map(width = 25, height= 50, number_rivers=3, debug=False):
+    w = width
+    h = height
+    return detail(quantize(rivers(number_rivers, randmap(width, height, debug), debug)))
 
 
-def randmap(width: int, height: int):
+def randmap(width: int, height: int, debug):
     map_matrix = np.zeros((width, height), dtype=float)
     base = np.random.randint(1, 2040)
     for y in range(height):
@@ -29,11 +34,15 @@ def randmap(width: int, height: int):
                     base=base
                     )
             val = (noise_val/(0.1))
-    #        if val > 5:
-    #           val = 5
-    #      elif val < -2:
-    #         val = -2
             map_matrix[x, y] = val
+    ##  Debug
+    if debug:
+        print("Debug: ")
+        print(f"Base: {base}")
+        print(f"Mapa: {width} x {height}")
+        print(f"Scale: {scale}")
+        print(f"OPL: {octaves}, {persistance}, {lacunarity}")
+
     return map_matrix
 
 
@@ -45,11 +54,12 @@ def access(index, shape, matrix):
 
 
 def min_nearby(max, index, matrix):
-    
     values = []
+    valid = []
     shape = matrix.shape  #size (i,j)
     list_index = list(index)
- 
+
+
     # Upside
     list_index[0] += 1
     values.append(access(tuple(list_index), shape, matrix))
@@ -63,11 +73,16 @@ def min_nearby(max, index, matrix):
     # Leftside
     list_index[1] -= 2
     values.append(access(tuple(list_index), shape, matrix))
-    
+    for i in range(4):
+        if values[i] != np.inf:
+            valid.append(i)
+
     values = np.array(values)
+    if np.random.random() < 0.5:
+        return valid[np.random.randint(0, np.size(valid))]
     return np.argmin(values)
 
-def rivers(cuantity: int, matrix):
+def rivers(cuantity: int, matrix, debug):
     new = np.copy(matrix)
     first = True
     for _ in range(cuantity):
@@ -81,17 +96,15 @@ def rivers(cuantity: int, matrix):
         index = np.unravel_index(flat_index, matrix.shape)  # coords
         new_index = list(index)
         max = matrix[index]
-        new[tuple(index)] = -1
-        
+        #new[tuple(index)] = -1
+
         i = 0
         while (max > -2):
-            
             i +=1
             if i>150: break
-            
 
             min = min_nearby(flat_index, index, matrix)
-            
+
             if(min == 0):
                 new_index[0] += 1
             elif (min == 1):
@@ -102,8 +115,17 @@ def rivers(cuantity: int, matrix):
                 new_index[1] -= 1
 
             index = tuple(new_index)        
-            new[index] = -1
             max = matrix[index]
+            if max >= -1:
+                new[index] = -1
+    
+
+    ## Debug
+
+    if debug:
+      print(f"Rivers: {cuantity}")
+    
+
     return new
 
 def quantize(matrix):
@@ -126,3 +148,14 @@ def quantize(matrix):
     return matrix
 
 
+def detail(matrix):
+    details = 10
+    for _ in range(details):
+        i = np.random.randint(0, w)
+        j = np.random.randint(0, h)
+        if matrix[i][j] == 1:
+            matrix[i][j] = 11
+        elif matrix[i][j] == 11:
+            matrix[i][j] = 10
+            #matrix[i][j+1] = 10
+    return matrix
