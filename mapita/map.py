@@ -8,21 +8,22 @@ persistance = 0.5
 lacunarity = 2.0
 
 
-w = 25 
+w = 25
 h = 50
 
 
-def map(width = 25, height= 50, number_rivers=3, debug=False):
+def map(width, height, number_rivers, debug):
+    global w, h
     w = width
     h = height
-    return detail(quantize(rivers(number_rivers, randmap(width, height, debug), debug)))
+    return detail(quantize(rivers(number_rivers, randmap(debug), debug)))
 
 
-def randmap(width: int, height: int, debug):
-    map_matrix = np.zeros((width, height), dtype=float)
+def randmap(debug):
+    map_matrix = np.zeros((w, h), dtype=float)
     base = np.random.randint(1, 2040)
-    for y in range(height):
-        for x in range(width):
+    for y in range(h):
+        for x in range(w):
             noise_val = noise.pnoise2(
                     x/scale,
                     y/scale,
@@ -39,7 +40,7 @@ def randmap(width: int, height: int, debug):
     if debug:
         print("Debug: ")
         print(f"Base: {base}")
-        print(f"Mapa: {width} x {height}")
+        print(f"Mapa: {w} x {h}")
         print(f"Scale: {scale}")
         print(f"OPL: {octaves}, {persistance}, {lacunarity}")
 
