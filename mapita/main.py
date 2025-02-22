@@ -5,6 +5,7 @@ from map import map
 from rich.console import Console
 from rich.text import Text
 
+import json
 
 # Create a Typer app instance
 app = typer.Typer()
@@ -12,27 +13,25 @@ app = typer.Typer()
 # Create a Rich Console instance for pretty output
 console = Console()
 
-# Create dictionary with the colors of the cells
-case_dispatcher = {
-    -2: "on #3198c4",  # Deep Sea
-    -1: "on #43dedb",  # Sea
-    0: "on #dceb6a",  # Shore (Sand)
-    1: "on #51c43f",  # Plain
-    2: "on #3f8f32",  # Higher Plain
-    3: "on #3c523e",  # Mountain
-    4: "on #DDDDDD",  # Snow or other
-    10: "on #bbaa3a",
-    11: "on #fcfb5a"
-}
+# Load themes from JSON file
+with open("themes.json", "r") as f:
+    themes = json.load(f)
 
+# Convert keys to integers (since JSON stores them as strings)
+themes = {k: {int(key): value for key, value in v.items()} for k, v in themes.items()}
+
+# Theme Selection
+
+def select_theme(theme_name):
+    return themes.get(theme_name, themes["earth"]) 
 
 # Prints in console
-def display_ascii_map(matrix):
+def display_ascii_map(matrix, selected_theme):
     # Loop through each row in the matrix
     for row in matrix:
         output_row = Text()
         for char in row:
-            style = case_dispatcher.get(int(char), "on #3f8f32")
+            style = selected_theme.get(int(char), "on #3f8f32")
             output_row.append(Text(" ", style=style))
 
         # Print the row after joining the parts
@@ -41,10 +40,11 @@ def display_ascii_map(matrix):
 
 # Main
 @app.command()
-def main(width=25, height=50, rivers=3, debug: bool = False):
-    print(height)
+def main(width=25, height=50, rivers=3, theme="earth", debug: bool = False):
     ascii_map = map(int(width), int(height), int(rivers), bool(debug))
-    display_ascii_map(ascii_map)
+   
+    selected_theme = select_theme(theme) 
+    display_ascii_map(ascii_map, selected_theme)
 
 
 if __name__ == "__main__":
